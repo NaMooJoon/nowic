@@ -1,0 +1,9 @@
+if(argc == 2) {
+	n = strtol(argv[1], NULL, 0); ->atoi()의 진화형(in C++)
+}
+
+nullptr != NULL (NULL은 그냥 integer 0, nullptr은 어떠한 포인터)
+
+vector->primative data type을 array로 쓸 수 있음.
+벡터는 배열이지만 사이즈가 없다. 사이즈를 사용할때마다 늘리면 된다.
+vector은 일종의 class이다. 
