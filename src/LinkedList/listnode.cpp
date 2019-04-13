@@ -1,25 +1,21 @@
-//  listnode.cpp
-//  Created by idebtor@gmail.com on December 12, 2018.
+// 03분반 21800179 김준현
 /*
-* Description:	This program implements a simple linked list of nodes
-* without a head structure and without sentinel nodes. It simply links
-* node to node. The caller is responsible for maintaining the the first
-* (head) element of the list. Most functions need the first node to work
-* with the list and returns the first node of the list since the first
-* may be changed inside of the function.
+On my honour, I pledge that I have neither received nor provided improper assistance in the completion of this assignment.
+Signed: 김준현 Section:  03분반 Student  Number: 21800179
 */
+
 #include <iomanip>
 #include "listnode.h"
 
 // removes all the nodes from the list (which are destroyed),
 // and leaving the container nullptr or its size to 0.
-pNode clear(pNode p) {
+Node* clear(Node* p) {
 	if (empty(p)) return nullptr;
 	DPRINT(cout << "clear: ";);
 
-	pNode curr = p;
+	Node* curr = p;
 	while (curr != nullptr) {
-		pNode prev = curr;
+		Node* prev = curr;
 		curr = curr->next;
 		cout << prev->item << " ";
 		delete prev;
@@ -29,15 +25,15 @@ pNode clear(pNode p) {
 }
 
 // returns the number of nodes in the list.
-int size(pNode p) {
+int size(Node* p) {
 	if (empty(p)) return 0;
 	int count = 0;
-	for (pNode c = p; c != nullptr; c = c->next, count++);
+	for (Node* c = p; c != nullptr; c = c->next, count++);
 	return count;
 }
 
 // returns the last node of in the list.
-pNode last(pNode p) {
+Node* last(Node* p) {
 	if (empty(p)) return nullptr;
 	while (p->next != nullptr) p = p->next;
 	return p;
@@ -45,13 +41,13 @@ pNode last(pNode p) {
 
 // returns true if the list is empty or no nodes.
 // To remove all the nodes of a list, see clear().
-bool empty(pNode p) {
+bool empty(Node* p) {
 	return p == nullptr;
 }
 
 // inserts a new node with val at the beginning of the list.
 // This effectively increases the list size by one.
-pNode push_front(pNode p, int val) {
+Node* push_front(Node* p, int val) {
 	DPRINT(cout << "><push_front val=" << val << endl;);
 
 	Node* newNode = new Node(val, p);
@@ -62,12 +58,15 @@ pNode push_front(pNode p, int val) {
 
 // adds a new node with val at the end of the list and returns the
 // first node of the list. This effectively increases the list size by one.
-pNode push_back(pNode p, int val) {
+Node* push_back(Node* p, int val) {
 	DPRINT(cout << "><push_back val=" << val << endl;);
+	Node* newNode = new Node(val);
 
-	Node* cur = last(p);
-	Node* newNode = new Node(val, cur->next);
-	cur = newNode;
+	Node* cur = p;
+	if(cur == nullptr) return newNode;	// 아무것도 없는 경우
+
+	cur = last(cur);
+	cur->next = newNode;
 
 	return p;
 }
@@ -76,19 +75,22 @@ pNode push_back(pNode p, int val) {
 // The new node is actually inserted in front of the node with x.
 // It returns the first node of the list.
 // This effectively increases the container size by one.
-pNode push(pNode p, int val, int x) {
+Node* push(Node* p, int val, int x) {
 	if (empty(p)) return push_front(p, val);
 	if (p->item == x) return push_front(p, val);
 
-	pNode curr = p;
-	pNode prev = nullptr;
-
-	while(curr->next != nullptr || curr->next->item != x)
+	Node* curr = p;
+	Node* prev = nullptr;
+	// 원하는 위치 찾기
+	while(curr->next != nullptr && curr->next->item != x)
 		curr = curr->next;
 
+	if(curr->next == nullptr) return p; // 찾지 못한 경우
+
+	//찾은 경우
 	prev = curr;
 	curr = curr->next;
-	Node* newNode = new Node(val,curr);
+	Node* newNode = new Node(val, curr);
 	prev->next = newNode;
 
 	return p;
@@ -98,7 +100,7 @@ pNode push(pNode p, int val, int x) {
 // Values of new nodes are randomly generated in the range of
 // [0..(N + size(p))].
 // Since it simply calls push_back() repeatedly, it is O(N^2).
-pNode push_backN(pNode p, int N) {
+Node* push_backN(Node* p, int N) {
 	DPRINT(cout << "<push_backN N=" << size(p) << endl;);
 
 	int range = N + size(p);
@@ -116,11 +118,11 @@ pNode push_backN(pNode p, int N) {
 
 // removes the first node in the list and returns the new first node.
 // This destroys the removed node, effectively reduces its size by one.
-pNode pop_front(pNode p) {
+Node* pop_front(Node* p) {
 	DPRINT(cout << ">pop_front size=" << size(p) << endl;);
 	if(empty(p)) return nullptr;
 
-	*Node temp = p;
+	Node* temp = p; // delete하기 위한 임시저장
 	p = p->next;
 
 	delete(temp);
@@ -129,15 +131,17 @@ pNode pop_front(pNode p) {
 
 // removes the last node in the list, effectively reducing the
 // container size by one. This destroys the removed node.
-pNode pop_back(pNode p) {
+Node* pop_back(Node* p) {
 	DPRINT(cout << ">pop_back size=" << size(p) << endl;);
 	if (empty(p)) return nullptr;
 	Node* curr = p;
 	Node* prev;
-	while(curr->next == nullptr) {
+	//끝 위치와 끝에서 두번째 위치 찾기
+	while(curr->next != nullptr) {
 		prev = curr;
 		curr = curr->next;
 	}
+	// 두번째를 마지막으로
 	prev->next = nullptr;
 	delete(curr);
 
@@ -149,28 +153,49 @@ pNode pop_back(pNode p) {
 // It deletes all the nodes if N is zero which is the default or out of
 // the range of the list.
 // Since it simply calls pop_back() which is O(n) repeatedly, it is O(N^2).
-pNode pop_backN(pNode p, int N) {
+Node* pop_backN(Node* p, int N) {
 	DPRINT(cout << ">pop_backN N=" << N << endl;);
+	int Size = size(p);
 
-	cout << "your code here \n";
+	if(Size < N) clear(p);	// link size보다 N이 더 크면 모두 삭제
+	else{
+		Node* curr = p;
+		Node* temp;
+		// 삭제할 노드 위치로 이동하기.
+		for(int i = 1; i < Size - N; i++)
+			curr = curr->next;
+
+		temp = curr;		// 나중에 nullptr 처리하기 위한 임시 포인터
+		curr = curr->next;
+		// 모두 삭제
+		while (curr != nullptr) {
+			Node* prev = curr;
+			curr = curr->next;
+			// cout << prev->item << " ";
+			delete prev;
+		}
+		// 남은 link 마지막 nullptr처리
+		temp->next = nullptr;
+	}
+
 
 	DPRINT(cout << "<pop_backN size=" << size(p) << endl);
 	return p;
 }
 
 // removes the first occurrence of the node with val from the list
-pNode pop(pNode p, int val) {
+Node* pop(Node* p, int val) {
 	DPRINT(cout << ">pop val=" << val << endl;);
 	if (empty(p)) return nullptr;    // nothing to delete
-
 	if (p->item == val) return pop_front(p);
+	// 팝할 위치찾기
 	Node* curr = p;
-	while(curr->next != nullptr || curr->next->item != val)
+	while(curr->next != nullptr && curr->next->item != val)
 		curr = curr->next;
-
+	// 삭제
 	if(curr->next->item == val) {
 		Node* temp = curr->next;
-		curr->next = nullptr;
+		curr->next = temp->next;
 		delete(temp);
 	}
 
@@ -182,7 +207,7 @@ pNode pop(pNode p, int val) {
 // the list size is less than pmax * 2. If there are more than
 // (pmax * 2) nodes, then it shows only pmax number of nodes from
 // the beginning and the end in the list.
-void show(pNode p, bool all) {
+void show(Node* p, bool all) {
 	DPRINT(cout << "show(" << size(p) << ")\n";);
 	if (empty(p)) {
 		cout << "\n\tThe list is empty.\n";
@@ -190,7 +215,7 @@ void show(pNode p, bool all) {
 	}
 	int i;
 	int pmax = 10;   // a magic number, max number of items per line
-	pNode curr;
+	Node* curr;
 	const int N = size(p);
 
 	if (all || N < pmax * 2) {
@@ -203,7 +228,7 @@ void show(pNode p, bool all) {
 
 	// print the first pmax items
 	curr = p;
-	for(int i = 1; i <= pmax; i++, curr = cur->next)
+	for(int i = 1; i <= pmax; i++, curr = curr->next)
 		cout << " -> " << curr->item;
 	cout << endl;
 
