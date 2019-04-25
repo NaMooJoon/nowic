@@ -54,27 +54,24 @@ bool empty(pNode p) {
 pNode push_front(pNode p, int val) {
 	DPRINT(cout << "><push_front val=" << val << endl;);
 
-	Node* newNode = new Node(val, p);
-	p = newNode;
+	cout << "your code here \n";
 
 	return p;
 }
 
-// adds a new node with val at the end of the list and returns the
+// adds a new node with val at the end of the list and returns the 
 // first node of the list. This effectively increases the list size by one.
 pNode push_back(pNode p, int val) {
 	DPRINT(cout << "><push_back val=" << val << endl;);
 
-	Node* cur = last(p);
-	Node* newNode = new Node(val, cur->next);
-	cur = newNode;
+	cout << "your code here \n";
 
 	return p;
 }
 
 // inserts a new node with val at the position of the node with x.
 // The new node is actually inserted in front of the node with x.
-// It returns the first node of the list.
+// It returns the first node of the list. 
 // This effectively increases the container size by one.
 pNode push(pNode p, int val, int x) {
 	if (empty(p)) return push_front(p, val);
@@ -82,15 +79,7 @@ pNode push(pNode p, int val, int x) {
 
 	pNode curr = p;
 	pNode prev = nullptr;
-
-	while(curr->next != nullptr || curr->next->item != x)
-		curr = curr->next;
-
-	prev = curr;
-	curr = curr->next;
-	Node* newNode = new Node(val,curr);
-	prev->next = newNode;
-
+	cout << "your code here \n";
 	return p;
 }
 
@@ -115,15 +104,12 @@ pNode push_backN(pNode p, int N) {
 }
 
 // removes the first node in the list and returns the new first node.
-// This destroys the removed node, effectively reduces its size by one.
+// This destroys the removed node, effectively reduces its size by one. 
 pNode pop_front(pNode p) {
 	DPRINT(cout << ">pop_front size=" << size(p) << endl;);
-	if(empty(p)) return nullptr;
 
-	*Node temp = p;
-	p = p->next;
+	cout << "your code here \n";
 
-	delete(temp);
 	return p;
 }
 
@@ -132,55 +118,42 @@ pNode pop_front(pNode p) {
 pNode pop_back(pNode p) {
 	DPRINT(cout << ">pop_back size=" << size(p) << endl;);
 	if (empty(p)) return nullptr;
-	Node* curr = p;
-	Node* prev;
-	while(curr->next == nullptr) {
-		prev = curr;
-		curr = curr->next;
-	}
-	prev->next = nullptr;
-	delete(curr);
+	
+	cout << "your code here \n";
 
 	DPRINT(cout << "<pop_back size=" << size(p) << endl;);
 	return p;
 }
 
-// deletes N number of nodes, starting from the end.
-// It deletes all the nodes if N is zero which is the default or out of
+// deletes N number of nodes, starting from the end. 
+// It deletes all the nodes if N is zero which is the default or out of 
 // the range of the list.
 // Since it simply calls pop_back() which is O(n) repeatedly, it is O(N^2).
 pNode pop_backN(pNode p, int N) {
 	DPRINT(cout << ">pop_backN N=" << N << endl;);
-
+	
 	cout << "your code here \n";
 
 	DPRINT(cout << "<pop_backN size=" << size(p) << endl);
 	return p;
 }
 
-// removes the first occurrence of the node with val from the list
+// removes the first occurrence of the node with val from the list 
 pNode pop(pNode p, int val) {
 	DPRINT(cout << ">pop val=" << val << endl;);
 	if (empty(p)) return nullptr;    // nothing to delete
 
 	if (p->item == val) return pop_front(p);
-	Node* curr = p;
-	while(curr->next != nullptr || curr->next->item != val)
-		curr = curr->next;
 
-	if(curr->next->item == val) {
-		Node* temp = curr->next;
-		curr->next = nullptr;
-		delete(temp);
-	}
+	cout << "your code here \n";
 
 	DPRINT(cout << "<pop size=" << size(p) << endl;);
 	return p;
 }
 
-// shows the values of all the nodes in the list if all is true or
-// the list size is less than pmax * 2. If there are more than
-// (pmax * 2) nodes, then it shows only pmax number of nodes from
+// shows the values of all the nodes in the list if all is true or 
+// the list size is less than pmax * 2. If there are more than 
+// (pmax * 2) nodes, then it shows only pmax number of nodes from 
 // the beginning and the end in the list.
 void show(pNode p, bool all) {
 	DPRINT(cout << "show(" << size(p) << ")\n";);
@@ -202,21 +175,13 @@ void show(pNode p, bool all) {
 	}
 
 	// print the first pmax items
-	curr = p;
-	for(int i = 1; i <= pmax; i++, curr = cur->next)
-		cout << " -> " << curr->item;
-	cout << endl;
+	cout << "your code here \n";
 
 	cout << "\n...left out...\n";
 	// print the last pmax items
 	// move the pointer to the place where pmax items are left.
-	curr = p;
-	for(int i = 1; i <= N - pmax; i++)
-		curr = curr->next;
 
-	for(int i = 1; i <= pmax; i++, curr = curr->next)
-		cout << " -> " << curr->item;
-	cout << endl;
+	cout << "your code here \n";
 
 	cout << "\n";
 }

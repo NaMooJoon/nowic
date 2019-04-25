@@ -19,6 +19,7 @@ Node* clear(Node* p) {
 		curr = curr->next;
 		cout << prev->item << " ";
 		delete prev;
+		//cout << prev->item << " ";
 	}
 	cout << "\tcleard \tHappy Coding~~\n";
 	return nullptr;
@@ -144,6 +145,7 @@ Node* pop_back(Node* p) {
 	// 두번째를 마지막으로
 	prev->next = nullptr;
 	delete(curr);
+	//cout << curr->item << endl;
 
 	DPRINT(cout << "<pop_back size=" << size(p) << endl;);
 	return p;
