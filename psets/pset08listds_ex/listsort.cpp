@@ -3,9 +3,6 @@
 // 2018.12.15
 
 #include <iostream>
-#include <cstdlib>
-#include <cmath>
-
 #include "listds.h"
 using namespace std;
 
@@ -15,49 +12,48 @@ using namespace std;
 #define DPRINT(func) ;
 #endif
 
-/* This function takes last element as pivot, places the pivot element at its
-correct position in sorted array, and places all smaller (smaller than pivot)
-to left of pivot and all greater elements to right of pivot */
-Node* partition(Node* lo, Node* hi) {
+// This function takes last element as pivot, places the pivot element at its
+// correct position in sorted array, and places all smaller (smaller than pivot)
+// to left of pivot and all greater elements to right of pivot 
+pNode partition(pNode lo, pNode hi, int(*comp)(int, int) = ascending) {
 	int x = hi->item;     // set pivot as hi value
-	Node* i = lo->prev;   // Index of smaller element
+	pNode i = lo->prev;   // Index of smaller element
 
-	for (Node* j = lo; j != hi; j = j->next) {
+	for (pNode j = lo; j != hi; j = j->next) {
 		// If current element is smaller than or equal to pivot
-		if (j->item <= x) {
+		if (comp(x, j->item) > 0) {
 			i = (i == nullptr) ? lo : i->next;    // increment index of smaller element
-			swap(i->item, j->item);               // Swap current element with index
+			std::swap(i->item, j->item);          // Swap current element with index
 		}
 	}
 	i = (i == nullptr) ? lo : i->next;
-	swap(i->item, hi->item);
+	std::swap(i->item, hi->item);
 	return i;
 }
 
-// QuickSort helper function for recursive operation
+// quickSort helper function for recursive operation
 // list[]: array to be sorted, lo: Starting index, h: Ending index
 // N is added only for debugging or DPRINT
-void _quickSort(Node* lo, Node* hi) {
+void _quickSort(pNode lo, pNode hi, int(*comp)(int, int) = ascending) {
 	if (lo != nullptr && lo != hi && lo != hi->next) {
-		Node* p = partition(lo, hi); // Partitioning index
-		_quickSort(lo, p->prev);
-		_quickSort(p->next, hi);
+		pNode p = partition(lo, hi, comp); // Partitioning index
+		_quickSort(lo, p->prev, comp);
+		_quickSort(p->next, hi, comp);
 	}
 }
 
-// quick sort algorithm, comp() is not implemented yet.
-void quickSort(List* head, int(*comp)(int, int)) {
-	_quickSort(begin(head), last(head));
+void quickSort(pList head, int(*comp)(int, int)) {
+	_quickSort(begin(head), last(head), comp);
 }
 
-void bubbleSort(List* p, int(*comp)(int, int)) {
+void bubbleSort(pList p, int(*comp)(int, int)) {
 	bool swapped = true;
 	DPRINT(cout << ">bubbleSort N=" << size(p) << endl;);
 	if (sorted(p)) return reverse(p);
 
-	Node* tail = end(p);
-	Node* curr;
-	for (Node* i = begin(p); i != end(p) && swapped; i = i->next) {
+	pNode tail = end(p);
+	pNode curr;
+	for (pNode i = begin(p); i != end(p) && swapped; i = i->next) {
 		swapped = false;
 		for (curr = begin(p); curr->next != tail; curr = curr->next) {
 			if (comp(curr->item, curr->next->item) > 0) {
@@ -72,15 +68,15 @@ void bubbleSort(List* p, int(*comp)(int, int)) {
 }
 
 
-void bubbleSort2(List* p, int(*comp)(int, int)) {
+void bubbleSort2(pList p, int(*comp)(int, int)) {
 	bool swapped;
 	DPRINT(cout << ">bubleSort2 N=" << size(p) << endl;);
 	if (sorted(p)) return reverse(p);
 
-	Node* tail = end(p);
+	pNode tail = end(p);
 	do {
 		swapped = false;
-		Node* curr = begin(p);
+		pNode curr = begin(p);
 		while (curr->next != tail) {
 			if (comp(curr->item, curr->next->item) > 0) {
 				swap(curr->item, curr->next->item);
@@ -94,7 +90,7 @@ void bubbleSort2(List* p, int(*comp)(int, int)) {
 	DPRINT(cout << "<bubbleSort N=" << size(p) << endl;);
 }
 
-void selectionSort(List* p, int(*comp)(int, int)) {
+void selectionSort(pList p, int(*comp)(int, int)) {
 	DPRINT(cout << ">selectionSort N=" << size(p) << endl;);
 
 	cout << "your code here\n";
@@ -102,7 +98,7 @@ void selectionSort(List* p, int(*comp)(int, int)) {
 	DPRINT(cout << "<selctionSort N=" << size(p) << endl;);
 }
 
-/** for your reference
+/** for your reference 
 void selectionSort(int *list, int n) {
 	int min;
 	for (int i = 0; i < n - 1; i++) {
@@ -116,3 +112,4 @@ void selectionSort(int *list, int n) {
 	}
 }
 */
+

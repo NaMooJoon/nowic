@@ -20,7 +20,7 @@
 using namespace std;
 
 // returns the first node which List::head points to in the container.
-pNode begin(pList p) {
+Node* begin(List* p) {
 	return p->head->next;
 }
 
@@ -32,43 +32,44 @@ pNode begin(pList p) {
 // in combination with List::begin to specify a range including all the nodes in
 // the list. This is a kind of simulated used in STL. If the container is empty,
 // this function returns the same as List::begin.
-pNode end(pList p) {
+Node* end(List* p) {
 	return p->tail;          // not tail->next
 }
 
-pNode last(pList p) {
+Node* last(List* p) {
 	return p->tail->prev;
 }
 
 // returns the first node of the second half of the list.
-pNode half(pList p) {
+Node* half(List* p) {
 	int N = size(p);
-	pNode c = begin(p);
-	for(int i = 0; i < N/2; i++, c = c->next)
+	Node* c = begin(p);
+	for(int i = 0; i < N/2 + 1; i++, c = c->next);
+
 	return c;
 }
 
 // returns the first node with a value found, nullptr otherwise.
 pNode find(pList p, int val) {
 	DPRINT(cout << ">find val=" << val << endl;);
-
-	for (pNode c = begin(p); c != end(p); c = c->next)
+	pNode c = begin(p);
+	for (; c != end(p); c = c->next)
 		if (c->item == val) return c;
 
 	DPRINT(cout << "<find - not found\n";);
-	return nullptr;
+	return c;
 }
 
 // Removes all elements from the list container(which are destroyed),
 // and leaving the container with a size of 0.
-void clear(pList p) {
+void clear(List* p) {
 	if (empty(p)) return;
 
 	DPRINT(cout << ">clear: ";);
-	pNode curr = begin(p);
-	pNode head = curr->prev;		// saved head node
+	Node* curr = begin(p);
+	Node* head = curr->prev;		// saved head node
 	while (curr != end(p)) {
-		pNode prev = curr;
+		Node* prev = curr;
 		curr = curr->next;
 		DPRINT(cout << prev->item << " ";);
 		delete prev;
@@ -82,14 +83,14 @@ void clear(pList p) {
 
 // returns true if the list is empty, false otherwise.
 // To clear a list, see List::clear.
-bool empty(pList p) {
+bool empty(List* p) {
 	return begin(p) == end(p);
 }
 
 // returns the number of nodes in the list container.
-int size(pList p) {
+int size(List* p) {
 	int count = 0;
-	for (pNode c = begin(p); c != end(p); c = c->next)
+	for (Node* c = begin(p); c != end(p); c = c->next)
 		count++;
 	return count;
 }
@@ -101,9 +102,9 @@ int size(pList p) {
 // inserts a new node with val at the position of the node x.
 // The new node is actually inserted in front of the node x.
 // This effectively increases the list size by one.
-void insert(pNode x, int val) {
+void insert(Node* x, int val) {
 	DPRINT(cout << ">insert val=" << val << endl;);
-	pNode node = new Node{ val, x->prev, x };
+	Node* node = new Node( val, x->prev, x );
 	x->prev = x->prev->next = node;
 	DPRINT(cout << "<insert\n";);
 }
@@ -114,7 +115,13 @@ void insert(pNode x, int val) {
 // a node regardless of its positions in the list such as front, back
 // or in the middle of the list.
 void erase(pNode x) {
-	pNode node = x->prev;
+	x->prev->next = x->next;
+	x->next->prev = x->prev;
+	delete x;
+}
+
+void erase(pList p, pNode x) {	// checks if x is either tail or head
+	if (x == p->tail || x == p->head || x == nullptr) return;
 	x->prev->next = x->next;
 	x->next->prev = x->prev;
 	delete x;
@@ -124,15 +131,15 @@ void erase(pNode x) {
 /////////////////////// pop ///////////////////////////////////////////////
 // removes the first node in the list.
 // This destroys the removed node, and reduces its size by one.
-void pop_front(pList p) {
+void pop_front(List* p) {
 	DPRINT(cout << ">pop_front\n";);
-	if (!empty(p)) erase(begin(p));
+	erase(p, begin(p));
 	DPRINT(cout << "<pop_front\n";);
 }
 
 // removes the last node in the list, and reduces the list size
 // by one. This destroys the removed node.
-void pop_back(pList p) {
+void pop_back(List* p) {
 	DPRINT(cout << ">pop_back\n";);
 	if (!empty(p)) erase(end(p)->prev);
 	DPRINT(cout << "<pop_back\n";);
@@ -142,9 +149,9 @@ void pop_back(pList p) {
 // Unlike member function List::erase which erases a node by its position,
 // this function removes a node by its value.
 // Unlike pop(), pop_all() removes all the nodes with the value given.
-void pop(pList p, int val) {
+void pop(List* p, int val) {
 	DPRINT(cout << ">pop val=" << val << endl;);
-	erase(find(p, val));
+	erase(p, find(p, val));
 	DPRINT(cout << "<pop\n";);
 }
 
@@ -153,12 +160,12 @@ void pop(pList p, int val) {
 // by the number of nodes removed.  Unlike erase(), which erases a node
 // by its position, this function removes nodes by its value.
 // Unlike pop_all(), pop() removes the first node with the value given.
-void pop_all(pList p, int val) {
+void pop_all(List* p, int val) {
 	DPRINT(cout << ">pop_all val=" << val << endl;);
-	for(pNode c = begin(p); c != end(p); c = c->next) {
+	for(Node* c = begin(p); c != end(p); c = c->next) {
 		if(c->item == val) {
-			pList x = c; // x는 삭제를 하기위한 임시 저장 포인터.
-			c = prev;
+			//Node* x = c; // x는 삭제를 하기위한 임시 저장 포인터.
+			//c = c->prev;
 			erase(x);
 		}
 	}
@@ -169,7 +176,7 @@ void pop_all(pList p, int val) {
 // It deletes all the nodes if N is zero which is the default or out of
 // the range of the list.
 // Since it simply calls pop_back() which is O(1) repeatedly, it is O(n).
-void pop_backN(pList p, int N) {
+void pop_backN(List* p, int N) {
 	DPRINT(cout << ">pop_backN N=" << N << endl;);
 	int psize = size(p);
 	if (N <= 0 || N > psize) N = psize;
@@ -184,7 +191,7 @@ void pop_backN(pList p, int N) {
 /////////////////////// push ///////////////////////////////////////////////
 // inserts a new node with val at the beginning of the list.
 // This effectively increases the list size by one.
-void push_front(pList p, int val) {		// inserts a node at front of list
+void push_front(List* p, int val) {		// inserts a node at front of list
 	DPRINT(cout << ">push_front val=" << val << endl;);
 	insert(begin(p), val);
 	DPRINT(cout << "<push_front\n";);
@@ -192,7 +199,7 @@ void push_front(pList p, int val) {		// inserts a node at front of list
 
 // adds a new node with val at the end of the list and returns the
 // first node of the list. This effectively increases the list size by one.
-void push_back(pList p, int val) {
+void push_back(List* p, int val) {
 	DPRINT(cout << ">push_back val=" << val << endl;);
 	insert(end(p), val);
 	DPRINT(cout << "<push_back\n";);
@@ -202,16 +209,21 @@ void push_back(pList p, int val) {
 // The new node is actually inserted in front of the node with x.
 // It returns the first node of the list.
 // This effectively increases the container size by one.
-void push(pList p, int val, int x) {
+void push(List* p, int val, int x) {
 	DPRINT(cout << ">push val=" << val << endl;);
-	insert(find(p, x), val);
+	Node* pos = find(p, x);
+	if(pos == nullptr)
+		push_front(p, val);
+	else
+		insert(find(p, x), val);
+
 	DPRINT(cout << "<push\n";);
 }
 
 // adds N number of new nodes at the end of the list, O(1)
 // Values of new nodes are randomly generated in the range of
 // [0..(N + size(p))].
-void push_backN(pList p, int N) {
+void push_backN(List* p, int N) {
 	DPRINT(cout << ">push_backN N=" << N;);
 
 	int psize = size(p);
@@ -243,9 +255,9 @@ void unique(pList p) {
 }
 
 // reverses the order of the nodes in the list.
-// The entire operation does not involve the construction, destruction
-// or copy of any element object. Nodes are not moved, but pointers
-// are moved within the list. O(n)
+// The entire operation does not involve the construction,
+// destruction or copy of any element. Nodes are not moved,
+// but pointers are moved within the list. O(n)
 void reverse(pList p) {
 	DPRINT(cout << ">reverse\n";);
 	if (size(p) <= 1) return;
@@ -267,17 +279,17 @@ void shuffle(pList p) {
 	DPRINT(cout << ">shuffle\n";);
 	if (size(p) <= 1) return;    // nothing to shuffle
 
-	// find the mid node of the list p to split it into two lists at the mid node.
-	// remove the 1st half from the list p, and keep it as a list "que" to add.
-						// this que does not have two sentinel nodes
-						// set the last node of que teminated by nullptr
+	// find the mid node of the list p to split it into two lists.
+	// remove 1st half from the list p, and keep it as a list "que".
+						// the que does not have sentinel nodes
+						// set the last node of que terminated by null
 
 	// set the list p head such that it points the "mid" of the list p.
 					 // the list "mid" becomes the list p.
-					 // the list "mid" now has head/tail sentinel nodes
+					 // the list "mid" now has two sentinel nodes
 
 	// interleave nodes in the "que" into "mid" in the list of p.
-	// start inserting the fist node in "que" at the second node in "mid".
+	// start inserting 1st node in "que" at 2nd node in "mid".
 
 	cout << "your code here\n";
 
@@ -287,32 +299,37 @@ void shuffle(pList p) {
 ///////////////////////// sort /////////////////////////////////////////////
 int ascending (int a, int b) { return a - b; };
 int descending(int a, int b) { return b - a; };
+int more(int a, int b) { return (a - b); }
+int less(int a, int b) { return (b - a); }
 
-// returns the node of which val is greater than x firstly encountered.
+// returns the node of which value is larger than x found first,
+// the tail sentinel node which is returned by end(p) otherwise.
 pNode _more(pList p, int x) {
-	for (pNode c = begin(p); c != end(p); c = c->next)
+	pNode c = begin(p);
+	for (; c != end(p); c = c->next)
 		if (c->item > x) return c;
-	return nullptr;
+	return c;
 }
 
-// returns the node of which val is smaller than x firstly encountered
+// returns the node of which value is smaller than x found first,
+// the tail sentinel node which is returned by end(p) otherwise.
 pNode _less(pList p, int x) {
-	for (pNode c = begin(p); c != end(p); c = c->next)
+	pNode c = begin(p);
+	for (; c != end(p); c = c->next)
 		if (c->item < x) return c;
-	return nullptr;
+	return c;
 }
 
-// returns true if the list is sorted either ascending or descending.
+// returns true if sorted either by either ascending or descending
 bool sorted(pList p) {
 	DPRINT(cout << ">sorted up or dn\n";);
-	if (size(p) <= 1) return true;
 	return sorted(p, ascending) || sorted(p, descending);
 }
 
-// returns true if the list is sorted according to comp() function.
-// com() function may be either ascending or descending.
+// returns true if sorted according to comp fp provided
 bool sorted(pList p, int(*comp)(int a, int b)) {
 	DPRINT(cout << ">sorted?\n";);
+	if (size(p) <= 1) return true;
 
 	cout << "your code here\n";
 
@@ -320,34 +337,81 @@ bool sorted(pList p, int(*comp)(int a, int b)) {
 	return true;
 }
 
-// inserts a new node with val in sorted order
+// inserts a node with val in sorted in the "sorted" list. O(n)
 void push_sorted(pList p, int val) {
 	DPRINT(cout << "<push_sorted val=" << val << endl;);
 	cout << "your code here\n";
 	DPRINT(cout << "<push_sorted\n";);
 }
 
-// inserts N number of nodes in sorted order
-// don't invoke push_sort() by N times, but invoke sorted() once
-// and implement the rest like push_sort().
+// inserts N number of nodes in sorted in the sorted list.
+// If you invoke push_sort() by N times, it takes longer. Therefore,
+// don't call push_sort() N timee. But if you may follow something
+// like push_sort(), its time complexity will be O(n^2) or larger.
+// The values for new nodes are randomly generated in the range of
+// [0..(N + size(p))]. For mac users, you use rand(). For pc, use
+// (rand() * RAND_MAX + rand()) instead of rand().
 void push_sortedN(pList p, int N) {
 	DPRINT(cout << "<push_sortedN N=" << N << endl;);
+
+	int psize = size(p);
+	int range = N + psize;
+	bool upsorted = sorted(p, ascending);
+	srand((unsigned)time(NULL));	// initialize random seed
 
 	cout << "your code here\n";
 
 	DPRINT(cout << "<push_sortedN\n";);
 }
 
-// returns a list of nodes sorted in ascending order if not sorted by default,
-// using bubble or selection sort algorithm which is O(n^2).
-// If the list is already sorted, it reverses the list such that the ascending
-// ordered list becomes a descending order list and vice versa. It is O(n).
-//
-// In the bubble sort, it checks values of two adjacent node whether they
-// are in ascending order or not, if not then we swap the value. It does this
-// until every element get its right position.  In 1st pass the largest value
-// get its right position and in 2nd pass 2nd largest value get its position
-// and in 3rd pass 3rd largest element get its position and so on.
+// inserts N number of nodes in sorted in the sorted list.
+// The goal of this function is to make it O(n log n).
+// Algorithm:
+// 1. Generate N numbers to insert. Let's name this array, vals.
+// 2. Sort vals using quicksort() of which time complexity
+//    is O(n log n), in ascending or descending depending on
+//    the list. .
+// 3. Merge two lists.
+//    Compare two values from the list and vals one by one.
+//    For example, if sorted ascending and vals is smaller,
+//    insert the vals into the list and go for the next val.
+//    the list pointer does not increment.
+//    If vals is larger, then the list pointer increment, but
+//    vals index does not increment.
+// 4. If the list is exhausted, then exit the loop. If vals
+//    is not exhausted, insert the rest of vals at the end
+//    of the list.
+//    Make sure that you go through a loop the list and vals
+//    together once. This is the same concept used in the
+//    most famous "mergesort" algorithm except recursion.
+// The values for new nodes are randomly generated in the range of
+// [0..(N + size(p))]. For mac users, you use rand(). For pc, use
+// (rand() * RAND_MAX + rand()) instead of rand().
+void push_sortedNlog(pList p, int N) {
+	DPRINT(cout << "<push_sortedNlog N=" << N << endl;);
+
+	int psize = size(p);
+	int range = N + psize;
+	int* vals = new int[N];
+
+	cout << "your code here\n";
+
+	delete[] vals;
+	DPRINT(cout << "<push_sortedNlog\n";);
+}
+
+// returns a list of nodes sorted in ascending order if not
+// sorted by default, using bubble or selection sort algorithm
+// which is O(n^2).
+// If the list is already sorted, it reverses the list such that
+// the ascending ordered list becomes a descending order list and
+// vice versa. It is O(n).
+// In the bubble sort, it checks values of two adjacent node
+// whether they are in ascending order or not, if not then we
+// swap the value. It does this until every element get its right
+// position.  In 1st pass the largest value get its right position
+// and in 2nd pass 2nd largest value get its position and in 3rd
+// pass 3rd largest element get its position and so on.
 void sort(pList p) {
 	DPRINT(cout << ">sort N=" << size(p) << endl;);
 	if (sorted(p)) return reverse(p);
