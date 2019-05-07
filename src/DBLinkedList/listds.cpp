@@ -1,16 +1,7 @@
-/**
-* File: listdsx.cpp, listds.h
-*       implements a doubly linked list with sentinel nodes
-*       and test it interactively
-* Author: Youngsup Kim, idebtor@gmail.com
-*
-* 04/13/16:	Created
-* 02/10/19:	C++ conversion, doubly linked list
-*
-* 1. This implements a doubly linked list with two sentinel nodes which
-*    provide with benifits of coding consistency and easy maintenance.
-* 2. It does not implment C++ iterator (which is deprecated), but simulated
-*    most of memeber functions defined in std::List.
+// 03분반 21800179 김준현
+/*
+On my honour, I pledge that I have neither received nor provided improper assistance in the completion of this assignment.
+Signed: 김준현 Section:  03분반 Student  Number: 21800179
 */
 
 #include <iostream>
@@ -42,17 +33,19 @@ Node* last(List* p) {
 
 // returns the first node of the second half of the list.
 Node* half(List* p) {
-	int N = size(p);
-	Node* c = begin(p);
-	for(int i = 0; i < N/2 + 1; i++, c = c->next);
-
-	return c;
+	Node* rabbit = begin(p);
+	Node* turtle = begin(p);
+	while (rabbit != end(p) && rabbit->next != end(p)) {
+	  rabbit = rabbit->next->next;
+	  turtle = turtle->next;
+	}
+	return turtle;
 }
 
 // returns the first node with a value found, nullptr otherwise.
-pNode find(pList p, int val) {
+Node* find(List* p, int val) {
 	DPRINT(cout << ">find val=" << val << endl;);
-	pNode c = begin(p);
+	Node* c = begin(p);
 	for (; c != end(p); c = c->next)
 		if (c->item == val) return c;
 
@@ -114,13 +107,13 @@ void insert(Node* x, int val) {
 // It is specifically designed to be efficient inserting and removing
 // a node regardless of its positions in the list such as front, back
 // or in the middle of the list.
-void erase(pNode x) {
+void erase(Node* x) {
 	x->prev->next = x->next;
 	x->next->prev = x->prev;
 	delete x;
 }
 
-void erase(pList p, pNode x) {	// checks if x is either tail or head
+void erase(List* p, Node* x) {	// checks if x is either tail or head
 	if (x == p->tail || x == p->head || x == nullptr) return;
 	x->prev->next = x->next;
 	x->next->prev = x->prev;
@@ -164,8 +157,8 @@ void pop_all(List* p, int val) {
 	DPRINT(cout << ">pop_all val=" << val << endl;);
 	for(Node* c = begin(p); c != end(p); c = c->next) {
 		if(c->item == val) {
-			//Node* x = c; // x는 삭제를 하기위한 임시 저장 포인터.
-			//c = c->prev;
+			Node* x = c; // x는 삭제를 하기위한 임시 저장 포인터.
+			c = c->prev;
 			erase(x);
 		}
 	}
@@ -181,7 +174,8 @@ void pop_backN(List* p, int N) {
 	int psize = size(p);
 	if (N <= 0 || N > psize) N = psize;
 	for (int i = 0; i < N; i++) {
-		cout << setw(7) << "\r\tdeleting in [" << psize - i - 1 << "]            ";
+		if (i % 10000 == 0)
+			cout << setw(7) << "\r\tdeleting in [" << psize - i - 1 << "]        ";
 		pop_back(p);
 	}
 	cout << "\n";
@@ -223,16 +217,27 @@ void push(List* p, int val, int x) {
 // adds N number of new nodes at the end of the list, O(1)
 // Values of new nodes are randomly generated in the range of
 // [0..(N + size(p))].
-void push_backN(List* p, int N) {
+void push_backN(List* p, int N, int val) {
 	DPRINT(cout << ">push_backN N=" << N;);
-
 	int psize = size(p);
-	int range = N + psize;
-	srand((unsigned)time(NULL));
-	for (int i = 0; i < N; i++) {
-		int val = rand() % range;
-		push_back(p, val);
-		cout << setw(7) << "\r\tinserting in [" << i + psize << "]=" << val << "        ";
+
+	if (val == 0) {
+		int range = N + psize;
+		srand((unsigned)time(NULL));
+
+		for (int i = 0; i < N; i++) {
+			int val = ((long)rand() * RAND_MAX + rand()) % range;
+			push_back(p, val);
+			if (i % 10000 == 0)
+				cout << setw(7) << "\r\tinserting in [" << i + psize << "]=" << val << "        ";
+		}
+	}
+	else {
+		for (int i = 0; i < N; i++) {
+			push_back(p, val);
+			if (i % 10000 == 0)
+				cout << setw(7) << "\r\tinserting in [" << i + psize << "]=" << val << "        ";
+		}
 	}
 	cout << "\n";
 
@@ -245,11 +250,16 @@ void push_backN(List* p, int N) {
 // equal nodes in the list. Notice that a node is only removed from
 // the list if it compares equal to the node immediately preceding it.
 // Thus, this function is especially useful for sorted lists. O(n)
-void unique(pList p) {
+void unique(List* p) {
 	DPRINT(cout << ">unique N=" << size(p) << endl;);
 	if (size(p) <= 1) return;
 
-	cout << "your code here\n";
+	for (Node* c = begin(p); c != end(p); c = c->next)
+    	if (c->item == c->prev->item){
+			Node* x = c;
+			c = c->prev;
+      		erase(x);
+		}
 
 	DPRINT(cout << "<unique";);
 }
@@ -258,7 +268,7 @@ void unique(pList p) {
 // The entire operation does not involve the construction,
 // destruction or copy of any element. Nodes are not moved,
 // but pointers are moved within the list. O(n)
-void reverse(pList p) {
+void reverse(List* p) {
 	DPRINT(cout << ">reverse\n";);
 	if (size(p) <= 1) return;
 
@@ -266,7 +276,12 @@ void reverse(pList p) {
 	// then, swap head and tail.
 	// hint: use while loop, don't use begin()/end()
 
-	cout << "your code here\n";
+	for(Node* c = p->head; c != nullptr;){
+		Node* x = c;
+		c = c->next;
+		swap(x->prev, x->next);
+	}
+	swap(p->head, p->tail);
 
 	DPRINT(cout << "<reverse\n";);
 }
@@ -275,23 +290,37 @@ void reverse(pList p) {
 // The first half and the second half are interleaved each other.
 // The shuffled list begins with the second half of the original p.
 // For example, 1234567890 returns 617283940.
-void shuffle(pList p) {
+void shuffle(List* p) {
 	DPRINT(cout << ">shuffle\n";);
 	if (size(p) <= 1) return;    // nothing to shuffle
 
 	// find the mid node of the list p to split it into two lists.
+	Node* mid = half(p);
+	Node* que = begin(p);
 	// remove 1st half from the list p, and keep it as a list "que".
-						// the que does not have sentinel nodes
-						// set the last node of que terminated by null
+	mid->prev->next = nullptr;	// set the last node of que terminated by null
+	que->prev = nullptr;		// the que does not have sentinel nodes
 
 	// set the list p head such that it points the "mid" of the list p.
-					 // the list "mid" becomes the list p.
-					 // the list "mid" now has two sentinel nodes
+	mid->prev = p->head;		// the list "mid" becomes the list p.
+	p->head->next = mid;		// the list "mid" now has two sentinel nodes
 
 	// interleave nodes in the "que" into "mid" in the list of p.
 	// start inserting 1st node in "que" at 2nd node in "mid".
+	Node* _que = que;
+	Node* _mid = begin(p);
+	while(_que != nullptr) {
+		Node* _mid2 = _mid->next;	// mid->next를 임시 저장할 노드
+		Node* _que2 = _que->next;	// que->next를 임시 저장할 노드
+		_mid->next->prev = _que;
+		_que->next = _mid->next;
+		_mid->next = _que;
+		_que->prev = _mid;
 
-	cout << "your code here\n";
+		_mid = _mid2;
+		_que = _que2;
+	}
+
 
 	DPRINT(cout << "<shuffle\n";);
 }
@@ -304,8 +333,8 @@ int less(int a, int b) { return (b - a); }
 
 // returns the node of which value is larger than x found first,
 // the tail sentinel node which is returned by end(p) otherwise.
-pNode _more(pList p, int x) {
-	pNode c = begin(p);
+Node* _more(List* p, int x) {
+	Node* c = begin(p);
 	for (; c != end(p); c = c->next)
 		if (c->item > x) return c;
 	return c;
@@ -313,34 +342,41 @@ pNode _more(pList p, int x) {
 
 // returns the node of which value is smaller than x found first,
 // the tail sentinel node which is returned by end(p) otherwise.
-pNode _less(pList p, int x) {
-	pNode c = begin(p);
+Node* _less(List* p, int x) {
+	Node* c = begin(p);
 	for (; c != end(p); c = c->next)
 		if (c->item < x) return c;
 	return c;
 }
 
 // returns true if sorted either by either ascending or descending
-bool sorted(pList p) {
+bool sorted(List* p) {
 	DPRINT(cout << ">sorted up or dn\n";);
 	return sorted(p, ascending) || sorted(p, descending);
 }
 
 // returns true if sorted according to comp fp provided
-bool sorted(pList p, int(*comp)(int a, int b)) {
+bool sorted(List* p, int(*comp)(int a, int b)) {
 	DPRINT(cout << ">sorted?\n";);
 	if (size(p) <= 1) return true;
 
-	cout << "your code here\n";
+	for(Node* c = begin(p); c->next != end(p); c = c->next)
+		if(comp(c->item, c->next->item) > 0)
+			return false;
 
 	DPRINT(cout << "<sorted: true\n";);
 	return true;
 }
 
 // inserts a node with val in sorted in the "sorted" list. O(n)
-void push_sorted(pList p, int val) {
+void push_sorted(List* p, int val) {
 	DPRINT(cout << "<push_sorted val=" << val << endl;);
-	cout << "your code here\n";
+
+	if (sorted(p, ascending))
+		insert(_more(p, val), val);
+	else
+		insert(_less(p, val), val);
+
 	DPRINT(cout << "<push_sorted\n";);
 }
 
@@ -351,16 +387,45 @@ void push_sorted(pList p, int val) {
 // The values for new nodes are randomly generated in the range of
 // [0..(N + size(p))]. For mac users, you use rand(). For pc, use
 // (rand() * RAND_MAX + rand()) instead of rand().
-void push_sortedN(pList p, int N) {
+void push_sortedN(List* p, int N) {
 	DPRINT(cout << "<push_sortedN N=" << N << endl;);
 
 	int psize = size(p);
 	int range = N + psize;
-	bool upsorted = sorted(p, ascending);
+
 	srand((unsigned)time(NULL));	// initialize random seed
 
-	cout << "your code here\n";
+#if 1
+	// O(n^2) implment your code here for O(n^2)
+	// Refer to push_sorted(), but don't invoke push_sorted().
+	if (sorted(p, ascending)) {
+		for (int i = 0; i < N; i++){
+			int val = ((long)rand() * RAND_MAX + rand()) % range;
+			insert(_more(p, val), val);
+		}
+	}else {
+		for (int i = 0; i < N; i++){
+			int val = ((long)rand() * RAND_MAX + rand()) % range;
+			insert(_less(p, val), val);
+		}
+	}
 
+#endif
+
+#if 0
+	// O(n^3) Don't implement somethig like this, but in O(n^2).
+	for (int i = 0; i < N; i++) {
+		int val = (rand() * RAND_MAX + rand()) % range;
+		if (sorted(p, ascending)) {
+			Node* node = _more(p, val);
+			insert(node, val);
+		}
+		else {
+			Node* node = _less(p, val);
+			insert(node, val);
+		}
+	}
+#endif
 	DPRINT(cout << "<push_sortedN\n";);
 }
 
@@ -387,14 +452,40 @@ void push_sortedN(pList p, int N) {
 // The values for new nodes are randomly generated in the range of
 // [0..(N + size(p))]. For mac users, you use rand(). For pc, use
 // (rand() * RAND_MAX + rand()) instead of rand().
-void push_sortedNlog(pList p, int N) {
+void push_sortedNlog(List* p, int N) {
 	DPRINT(cout << "<push_sortedNlog N=" << N << endl;);
 
 	int psize = size(p);
 	int range = N + psize;
 	int* vals = new int[N];
+	int i = 0;
 
-	cout << "your code here\n";
+	srand((unsigned)time(NULL));
+	for(int j = 0; j < N; j++)
+		vals[j] = ((long)rand() * RAND_MAX + rand()) % range;
+
+	if (sorted(p, ascending)) {	// sorting이 ascending인 경우
+		quickSort(vals, N, ascending);
+		for(Node* c = begin(p); i < N;) {
+			if(c == end(p))
+				insert(c, vals[i++]);
+			else if(c->item > vals[i])
+				insert(c, vals[i++]);
+			else
+				c = c->next;
+		}
+	}
+	else {						// sorting이 descending인 경우
+		quickSort(vals, N, descending);
+		for(Node* c = begin(p); i < N;) {
+			if(c == end(p))
+				insert(c, vals[i++]);
+			else if(c->item < vals[i])
+				insert(c, vals[i++]);
+			else
+				c = c->next;
+		}
+	}
 
 	delete[] vals;
 	DPRINT(cout << "<push_sortedNlog\n";);
@@ -412,7 +503,7 @@ void push_sortedNlog(pList p, int N) {
 // position.  In 1st pass the largest value get its right position
 // and in 2nd pass 2nd largest value get its position and in 3rd
 // pass 3rd largest element get its position and so on.
-void sort(pList p) {
+void sort(List* p) {
 	DPRINT(cout << ">sort N=" << size(p) << endl;);
 	if (sorted(p)) return reverse(p);
 	bubbleSort(p);
@@ -423,7 +514,7 @@ void sort(pList p) {
 // the list size is less than pmax * 2. If there are more than
 // (pmax * 2) nodes, then it shows only pmax number of nodes from
 // the beginning and the end in the list.
-void show(pList p, bool all) {
+void show(List* p, bool all) {
 	DPRINT(cout << "show(" << size(p) << ")\n";);
 	if (empty(p)) {
 		cout << "\n\tThe list is empty.\n";
@@ -431,7 +522,7 @@ void show(pList p, bool all) {
 	}
 	int i;
 	int pmax = 10;   // a magic number, max number of items per line
-	pNode curr;
+	Node* curr;
 	const int N = size(p);
 
 	if (all || N < pmax * 2) {

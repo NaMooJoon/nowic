@@ -1,11 +1,10 @@
-// quicksort.cpp by idebtor@gmail.com
-// A typical recursive implementation of quick sort
-// 2018.12.15
+// 03분반 21800179 김준현
+/*
+On my honour, I pledge that I have neither received nor provided improper assistance in the completion of this assignment.
+Signed: 김준현 Section:  03분반 Student  Number: 21800179
+*/
 
 #include <iostream>
-#include <cstdlib>
-#include <cmath>
-
 #include "listds.h"
 using namespace std;
 
@@ -15,39 +14,38 @@ using namespace std;
 #define DPRINT(func) ;
 #endif
 
-/* This function takes last element as pivot, places the pivot element at its
-correct position in sorted array, and places all smaller (smaller than pivot)
-to left of pivot and all greater elements to right of pivot */
-Node* partition(Node* lo, Node* hi) {
+// This function takes last element as pivot, places the pivot element at its
+// correct position in sorted array, and places all smaller (smaller than pivot)
+// to left of pivot and all greater elements to right of pivot
+Node* partition(Node* lo, Node* hi, int(*comp)(int, int) = ascending) {
 	int x = hi->item;     // set pivot as hi value
 	Node* i = lo->prev;   // Index of smaller element
 
 	for (Node* j = lo; j != hi; j = j->next) {
 		// If current element is smaller than or equal to pivot
-		if (j->item <= x) {
+		if (comp(x, j->item) > 0) {
 			i = (i == nullptr) ? lo : i->next;    // increment index of smaller element
-			swap(i->item, j->item);               // Swap current element with index
+			std::swap(i->item, j->item);          // Swap current element with index
 		}
 	}
 	i = (i == nullptr) ? lo : i->next;
-	swap(i->item, hi->item);
+	std::swap(i->item, hi->item);
 	return i;
 }
 
-// QuickSort helper function for recursive operation
+// quickSort helper function for recursive operation
 // list[]: array to be sorted, lo: Starting index, h: Ending index
 // N is added only for debugging or DPRINT
-void _quickSort(Node* lo, Node* hi) {
+void _quickSort(Node* lo, Node* hi, int(*comp)(int, int) = ascending) {
 	if (lo != nullptr && lo != hi && lo != hi->next) {
-		Node* p = partition(lo, hi); // Partitioning index
-		_quickSort(lo, p->prev);
-		_quickSort(p->next, hi);
+		Node* p = partition(lo, hi, comp); // Partitioning index
+		_quickSort(lo, p->prev, comp);
+		_quickSort(p->next, hi, comp);
 	}
 }
 
-// quick sort algorithm, comp() is not implemented yet.
 void quickSort(List* head, int(*comp)(int, int)) {
-	_quickSort(begin(head), last(head));
+	_quickSort(begin(head), last(head), comp);
 }
 
 void bubbleSort(List* p, int(*comp)(int, int)) {
@@ -97,7 +95,15 @@ void bubbleSort2(List* p, int(*comp)(int, int)) {
 void selectionSort(List* p, int(*comp)(int, int)) {
 	DPRINT(cout << ">selectionSort N=" << size(p) << endl;);
 
-	cout << "your code here\n";
+	Node* min;
+	for(Node* curr = begin(p); curr != last(p); curr = curr->next) {
+		min = curr;
+		for(Node* c = curr->next; c != end(p); c = c->next) {
+			if(comp(min->item, c->item) > 0)
+				min = c;
+		}
+		swap(curr->item, min->item);
+	}
 
 	DPRINT(cout << "<selctionSort N=" << size(p) << endl;);
 }
