@@ -36,7 +36,7 @@
 #include <cassert>
 #include <vector>
 #include "tree.h"
-#include "treeque.h"		    // used only in levelorder
+//#include "treeque.h"		    // used only in levelorder
 using namespace std;
 
 void treeprint(tree t);        // print the tree on console graphically
@@ -56,9 +56,7 @@ int height(tree node) {
 	if (empty(node)) return 0;
 	// compute the depth of each subree and return the larger one.
 
-	cout << "your code here\n";
-
-	return 0;
+	return height(node->left) + height(node->right) + 1;
 }
 
 // Computes the size of the binary tree dyamically by
@@ -66,9 +64,7 @@ int height(tree node) {
 int size(tree node) {
 	if (node == nullptr) return 0;
 
-	cout << "your code here\n";
-	
-	return 1; 
+	return size(node->left) + size(node->right) + 1;
 }
 
 bool empty(tree t) {
@@ -84,7 +80,10 @@ int value(tree t) {
 tree clear(tree t) {
 	if (t == nullptr) return nullptr;
 	
-	cout << "your code here\n";
+	//cout << "your code here\n";
+    clear(t->left);
+    clear(t->right);
+    delete t;
 
 	return nullptr;
 }
@@ -93,10 +92,9 @@ tree clear(tree t) {
 // search a key in binary search tree(BST) recursively.
 bool contains(tree node, int key) {
 	if (empty(node)) return false;
-
-	cout << "your code here\n";
-
-	return true;
+    if (node->key == key)   return true;
+    
+	return (contains(node->left, key) || contains(node->right, key));
 }
 
 // does there exist a node with given key?
@@ -203,13 +201,13 @@ tree pred(tree node) {
 // Given a binary search tree, return the min or max key in the tree.
 // Don't need to traverse the entire tree.
 tree maximum(tree node) {			// returns max node
-	cout << "your code here\n";
-	return nullptr;
+    if(node->right == nullptr)  return node;
+	return maximum(node->right);
 }
 
 tree minimum(tree node) {			// returns min node
-	cout << "your code here\n";
-	return nullptr;
+    if(node->left == nullptr)   return node;
+    return minimum(node->left);
 }
 
 // Given a binary tree, its node values in inorder are passed
