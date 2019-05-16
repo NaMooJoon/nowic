@@ -55,19 +55,15 @@ int degree(tree t) {
 int height(tree node) {
 	if (empty(node)) return 0;
 	// compute the depth of each subree and return the larger one.
-
-	if(height(node->left) > height(node->right))
-        return height(node->left) + 1;
-    else
-        return height(node->right) + 1;
-
-	return 0;
+    int left = height(node->left);
+    int right = height(node->right);
+	return (left > right)? left + 1 :  right + 1;;
 }
 
 // Computes the size of the binary tree dyamically by
 // traversing the nodes recursively.
 int size(tree node) {
-    if (node == nullptr) return 0;
+	if (node == nullptr) return 0;
 	return 1 + size(node->left) + size(node->right);
 }
 
@@ -83,8 +79,9 @@ int value(tree t) {
 // frees all nodes while traversing the tree like postorder
 tree clear(tree t) {
 	if (t == nullptr) return nullptr;
-    clear(t->left); clear(t->right);
-    delete t;
+	
+	cout << "your code here\n";
+
 	return nullptr;
 }
 
@@ -92,10 +89,12 @@ tree clear(tree t) {
 // search a key in binary search tree(BST) recursively.
 bool contains(tree node, int key) {
 	if (empty(node)) return false;
-
-	cout << "your code here\n";
-
-	return true;
+    if (node->key == key)   return true;
+    
+    if (node->key < key)
+        return contains(node->left, key);
+    else
+        return contains(node->right, key);
 }
 
 // does there exist a node with given key?
@@ -202,20 +201,25 @@ tree pred(tree node) {
 // Given a binary search tree, return the min or max key in the tree.
 // Don't need to traverse the entire tree.
 tree maximum(tree node) {			// returns max node
-	cout << "your code here\n";
-	return nullptr;
+	while(node->right != nullptr)
+        node = node->right;
+    return node;
 }
 
 tree minimum(tree node) {			// returns min node
-	cout << "your code here\n";
-	return nullptr;
+	while(node->left != nullptr)
+        node = node->left;
+	return node;
 }
 
 // Given a binary tree, its node values in inorder are passed
 // back through the argument v which is passed by reference. 
 void inorder(tree node, vector<int>& v) {
 	DPRINT(cout << ">inorder size=" << v.size() << endl;);
-	cout << "your code here\n";
+    if(node == nullptr) return ;
+    inorder(node->left, v);
+    v.push_back(node->key);
+    inorder(node->right, v);
 	DPRINT(cout << "<inorder key=" << node->key << endl;);
 }
 
@@ -223,7 +227,10 @@ void inorder(tree node, vector<int>& v) {
 // back through the argument v which is passed by reference. 
 void postorder(tree node, vector<int>& v) {
 	DPRINT(cout << ">postorder size=" << v.size() << endl;);
-	cout << "your code here\n";
+    if(node == nullptr) return ;
+    v.push_back(node->key);
+    inorder(node->left, v);
+    inorder(node->right, v);
 	DPRINT(cout << "<postorder key=" << node->key << endl;);
 }
 
@@ -231,7 +238,10 @@ void postorder(tree node, vector<int>& v) {
 // back through the argument v which is passed by reference. 
 void preorder(tree node, vector<int>& v) {
 	DPRINT(cout << ">preorder size=" << v.size() << endl;);
-	cout << "your code here\n";
+    if(node == nullptr) return ;
+    inorder(node->left, v);
+    inorder(node->right, v);
+    v.push_back(node->key);
 	DPRINT(cout << "<preorder key=" << node->key << endl;);
 }
 
@@ -242,7 +252,11 @@ void levelorder(tree node, vector<int>& v) {
 	DPRINT(cout << ">levelorder";);
 	if (node == nullptr) return;
 
-	cout << "your code here\n";
+    queue<tree> que;
+    if(!node) return ;
+    que.push(node);
+    while()
+    
 
 	DPRINT(cout << "<levelorder size=" << v.size() << endl;);
 }

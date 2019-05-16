@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7627C4BB2284792F00B7F043 /* treeDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7627C4B82284792F00B7F043 /* treeDriver.cpp */; };
-		7627C4BC2284792F00B7F043 /* treeprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7627C4B92284792F00B7F043 /* treeprint.cpp */; };
-		7627C4BD2284792F00B7F043 /* tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7627C4BA2284792F00B7F043 /* tree.cpp */; };
 		7627C4C02284816200B7F043 /* libnowic_mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7627C4BF2284816200B7F043 /* libnowic_mac.a */; };
+		7627C4C4228B39A900B7F043 /* tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7627C4C1228B39A900B7F043 /* tree.cpp */; };
+		7627C4C5228B39A900B7F043 /* treeDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7627C4C2228B39A900B7F043 /* treeDriver.cpp */; };
+		7627C4C6228B39A900B7F043 /* treeprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7627C4C3228B39A900B7F043 /* treeprint.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,10 +27,10 @@
 
 /* Begin PBXFileReference section */
 		7627C4AE228460BC00B7F043 /* Tree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tree; sourceTree = BUILT_PRODUCTS_DIR; };
-		7627C4B82284792F00B7F043 /* treeDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = treeDriver.cpp; path = "../../../psets/pset09-10tree/treeDriver.cpp"; sourceTree = "<group>"; };
-		7627C4B92284792F00B7F043 /* treeprint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = treeprint.cpp; path = "../../../psets/pset09-10tree/treeprint.cpp"; sourceTree = "<group>"; };
-		7627C4BA2284792F00B7F043 /* tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree.cpp; path = "../../../psets/pset09-10tree/tree.cpp"; sourceTree = "<group>"; };
 		7627C4BF2284816200B7F043 /* libnowic_mac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnowic_mac.a; path = ../../lib/libnowic_mac.a; sourceTree = "<group>"; };
+		7627C4C1228B39A900B7F043 /* tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree.cpp; sourceTree = "<group>"; };
+		7627C4C2228B39A900B7F043 /* treeDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = treeDriver.cpp; sourceTree = "<group>"; };
+		7627C4C3228B39A900B7F043 /* treeprint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = treeprint.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,9 +65,9 @@
 		7627C4B0228460BC00B7F043 /* Tree */ = {
 			isa = PBXGroup;
 			children = (
-				7627C4BA2284792F00B7F043 /* tree.cpp */,
-				7627C4B82284792F00B7F043 /* treeDriver.cpp */,
-				7627C4B92284792F00B7F043 /* treeprint.cpp */,
+				7627C4C1228B39A900B7F043 /* tree.cpp */,
+				7627C4C2228B39A900B7F043 /* treeDriver.cpp */,
+				7627C4C3228B39A900B7F043 /* treeprint.cpp */,
 			);
 			path = Tree;
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7627C4BD2284792F00B7F043 /* tree.cpp in Sources */,
-				7627C4BB2284792F00B7F043 /* treeDriver.cpp in Sources */,
-				7627C4BC2284792F00B7F043 /* treeprint.cpp in Sources */,
+				7627C4C4228B39A900B7F043 /* tree.cpp in Sources */,
+				7627C4C5228B39A900B7F043 /* treeDriver.cpp in Sources */,
+				7627C4C6228B39A900B7F043 /* treeprint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
